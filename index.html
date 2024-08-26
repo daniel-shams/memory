@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Theos Memory</title>
+    <link rel="stylesheet" href="memorystyle.css">
+</head>
+<body>
+    <div class="game-container">
+        <div id="startScreen">
+            <h1>Theos Memory</h1>
+            <button id="startButton" class="game-button">Starta spel</button>
+        </div>
+        <div id="gameBoard" class="hidden">
+            <div id="counter">Hittade par: 0</div>
+            <div class="memory-board" id="memoryBoard"></div>
+            <div class="game-controls">
+                <button class="game-button" onclick="resetGame()">Återställ</button>
+                <button class="game-button" onclick="giveHint()">Ledtråd</button>
+                <button id="fullscreenButton" class="game-button">Fullskärm</button>
+                <button id="devButton" class="game-button dev-button">Dev</button>
+            </div>
+        </div>
+    </div>
+    <div id="notification" class="notification"></div>
+    <script src="memoryscript.js"></script>
+</body>
+</html>
