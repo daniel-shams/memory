@@ -1,195 +1,203 @@
 body {
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background-color: #f0f8ff;
-    margin: 0;
-    padding: 10px;
-    box-sizing: border-box;
+    font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    font-size: 16px;
+    margin: 0;
+    background-color: #f0f0f0;
 }
+
+#start-screen {
+    text-align: center;
+}
+
+#start-button {
+    font-size: 18px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+#start-button:hover {
+    background-color: #45a049;
+}
+
+#game-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#game-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
 .game-container {
     width: 100%;
-    max-width: 800px;
-    padding: 10px;
-    box-sizing: border-box;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
 .memory-board {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 5px;
+    gap: 10px;
     width: 100%;
-    aspect-ratio: 5 / 4;
-    margin: 10px 0;
+    max-width: 600px; /* Justera detta värde efter behov */
+    margin: 0 auto;
 }
+
+/* För 3x3 grid */
+.memory-board.level-1 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* För 4x4 grid */
+.memory-board.level-2 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* För 5x5 grid */
+.memory-board.level-3 {
+    grid-template-columns: repeat(5, 1fr);
+}
+
 .card {
-    aspect-ratio: 3 / 4;
+    width: 100%;
+    height: 100%;
     perspective: 1000px;
+    cursor: pointer;
+    aspect-ratio: 1 / 1;
 }
+
 .card-inner {
     width: 100%;
     height: 100%;
     transition: transform 0.6s;
     transform-style: preserve-3d;
+    position: relative;
 }
+
 .card.flipped .card-inner {
     transform: rotateY(180deg);
 }
+
 .card-front, .card-back {
     position: absolute;
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 5px;
+    overflow: hidden;
 }
+
 .card-front {
-    background-color: #4CAF50;
+    background-color: #2196F3;
 }
+
 .card-back {
     background-color: white;
     transform: rotateY(180deg);
 }
+
 .card-back img {
-    max-width: 90%;
-    max-height: 90%;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Ändra från 'cover' till 'contain' */
 }
+
 .game-controls {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
+    margin-top: 20px;
 }
+
 .game-button {
-    padding: 8px 12px;
-    font-size: 14px;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background-color: #87CEFA;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    margin: 0 5px;
 }
-.game-button:hover {
-    background-color: #5F9EA0;
+
+.game-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
-#counter {
-    width: 100%;
-    text-align: center;
-    font-size: 18px;
-    margin-bottom: 10px;
-}
+
 .notification {
     position: fixed;
-    top: 50%;
+    top: 20px;
     left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(255, 215, 0, 0.8);
-    color: #333;
-    padding: 20px 30px;
-    border-radius: 15px;
-    font-size: 28px;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
     display: none;
-    z-index: 1000;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    animation: popIn 0.5s ease-out;
-}
-@keyframes popIn {
-    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-}
-
-#startScreen {
-    text-align: center;
-    width: 100%;
-}
-
-#startButton {
-    font-size: 24px;
-    padding: 15px 30px;
-    margin-top: 20px;
 }
 
 .hidden {
     display: none;
 }
 
-.dev-button {
-    opacity: 0.1;
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
+/* Lägg till denna stil för att göra "Complete" knappen dold men synlig vid hover */
+#complete-button {
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
-.dev-button:hover, .dev-button:focus {
+#complete-button:hover {
     opacity: 1;
 }
 
-/* Lägg till följande stilar i slutet av din CSS-fil */
+#counter {
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
 
-.balloon-container {
+.level-complete-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
-    pointer-events: none;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     z-index: 1000;
 }
 
-.balloon {
-    position: absolute;
-    width: 30px;
-    height: 35px;
-    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-    animation: balloonFall linear forwards;
+.level-complete-message {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 24px;
+    text-align: center;
 }
 
-.balloon::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-    top: -5%;
-    left: 10%;
-    transform: rotate(-45deg);
-}
-
-.balloon-string {
-    position: absolute;
-    width: 1px;
-    height: 50px;
-    background-color: rgba(255, 255, 255, 0.7);
-    bottom: -50px;
-    left: 50%;
-    transform-origin: top center;
-    animation: stringWave 1s infinite ease-in-out;
-}
-
-@keyframes balloonFall {
-    from {
-        transform: translateY(-100vh) rotate(0deg);
-    }
-    to {
-        transform: translateY(100vh) rotate(360deg);
-    }
-}
-
-@keyframes stringWave {
-    0%, 100% { transform: rotate(5deg); }
-    50% { transform: rotate(-5deg); }
+:root {
+    --card-size: 120px;
 }
 
 @media (max-width: 600px) {
@@ -214,7 +222,27 @@ body {
     }
 }
 
-/* Lägg till detta i slutet av din CSS-fil */
+#time-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#current-time, #best-time {
+    margin: 5px 0;
+}
+
+.dev-button {
+    opacity: 0.1;
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+
+.dev-button:hover, .dev-button:focus {
+    opacity: 1;
+}
 
 .balloon-container {
     position: fixed;
@@ -230,44 +258,60 @@ body {
 .balloon {
     position: absolute;
     width: 30px;
-    height: 30px;
+    height: 40px;
     border-radius: 50%;
-    animation: balloonFall linear forwards;
+    bottom: -50px;
+    animation: float-up linear infinite;
 }
 
-.balloon::before {
-    content: '';
-    position: absolute;
+@keyframes float-up {
+    to {
+        transform: translateY(-100vh);
+    }
+}
+
+.celebration-container {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-    top: -5%;
-    left: 10%;
-    transform: rotate(-45deg);
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1001;
 }
 
-.balloon-string {
+.confetti {
     position: absolute;
-    width: 1px;
-    height: 50px;
-    background-color: rgba(255, 255, 255, 0.7);
-    bottom: -50px;
-    left: 50%;
-    transform-origin: top center;
-    animation: stringWave 2s infinite ease-in-out;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    animation: fall linear infinite;
 }
 
-@keyframes balloonFall {
-    from {
-        transform: translateY(-100vh) rotate(0deg);
-    }
+@keyframes fall {
     to {
-        transform: translateY(100vh) rotate(360deg);
+        transform: translateY(100vh) rotate(720deg);
     }
 }
 
-@keyframes stringWave {
-    0%, 100% { transform: rotate(5deg); }
-    50% { transform: rotate(-5deg); }
+.firework {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    animation: explode ease-out infinite;
+}
+
+@keyframes explode {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+        box-shadow: 0 0 0 0px rgba(255,255,255,0.5);
+    }
+    100% {
+        transform: scale(20);
+        opacity: 0;
+        box-shadow: 0 0 0 20px rgba(255,255,255,0);
+    }
 }
