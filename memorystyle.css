@@ -1,15 +1,24 @@
 body {
     font-family: Arial, sans-serif;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     min-height: 100vh;
     margin: 0;
+    padding: 10px;
     background-color: #f0f0f0;
+    box-sizing: border-box;
 }
 
-#start-screen {
-    text-align: center;
+#start-screen, #game-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 #start-button {
@@ -25,16 +34,6 @@ body {
 
 #start-button:hover {
     background-color: #45a049;
-}
-
-#game-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
 }
 
 #game-info {
@@ -54,26 +53,46 @@ body {
     display: grid;
     gap: 10px;
     width: 100%;
-    max-width: 600px; /* Justera detta värde efter behov */
+    max-width: 600px;
     margin: 0 auto;
 }
 
-/* För 3x3 grid */
+body {
+    background-color: #f0f0f0; /* Eller någon annan neutral färg */
+}
+
+/* För 3x3 grid (nivå 1) */
 .memory-board.level-1 {
     grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1 / 1;
+    margin: 20px auto;
 }
 
-/* För 4x4 grid */
+.memory-board.level-1 .card {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+}
+
+/* För 4x4 grid (nivå 2) */
 .memory-board.level-2 {
     grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
 }
 
-/* För 5x5 grid */
+/* För 5x5 grid (nivå 3) */
 .memory-board.level-3 {
     grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
 }
 
 .card {
+    aspect-ratio: 1 / 1;
     width: 100%;
     height: 100%;
     perspective: 1000px;
@@ -106,8 +125,13 @@ body {
 }
 
 .card-front {
-    background-color: #2196F3;
+    background-color: #2196F3; /* Blå färg för alla nivåer */
 }
+
+/* Ta bort eller kommentera bort dessa rader */
+/* .level-1-card .card-front { background-color: #2196F3; }
+.level-2-card .card-front { background-color: #4CAF50; }
+.level-3-card .card-front { background-color: #F44336; } */
 
 .card-back {
     background-color: white;
@@ -117,13 +141,17 @@ body {
 .card-back img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Ändra från 'cover' till 'contain' */
+    object-fit: contain;
 }
 
 .game-controls {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    gap: 10px;
+    margin-top: 10px;
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box;
 }
 
 .game-button {
@@ -201,12 +229,21 @@ body {
 }
 
 @media (max-width: 600px) {
-    body {
-        font-size: 14px;
+    .memory-board {
+        gap: 5px;
+        width: 95vw;
+        max-width: 95vw;
+        padding: 5px;
+        margin: 10px auto;
     }
 
-    .memory-board {
-        gap: 3px;
+    .memory-board.level-1 {
+        max-width: 95vw;
+    }
+
+    .card {
+        max-width: 100%;
+        max-height: none;
     }
 
     .game-button { 
@@ -217,8 +254,20 @@ body {
 
 @media (max-width: 400px) {
     .memory-board {
-        grid-template-columns: repeat(4, 1fr);
-        aspect-ratio: 4 / 5;
+        gap: 5px;
+        width: 95vw;
+        max-width: 95vw;
+        margin: 10px auto;
+    }
+
+    .card {
+        max-width: 100%;
+        max-height: none;
+    }
+
+    .game-button {
+        padding: 8px 16px;
+        font-size: 14px;
     }
 }
 
@@ -314,4 +363,136 @@ body {
         opacity: 0;
         box-shadow: 0 0 0 20px rgba(255,255,255,0);
     }
+}
+
+#level-title {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Befintliga stilar behålls */
+
+/* Lägg till dessa nya media queries för landskapsläge */
+@media (max-height: 500px) and (orientation: landscape) {
+    body {
+        justify-content: flex-start;
+    }
+
+    #game-screen {
+        justify-content: flex-start;
+    }
+
+    #level-title {
+        margin: 5px 0;
+    }
+
+    .memory-board {
+        margin: 5px auto;
+        width: 95vw;
+        max-width: 95vw;
+        gap: 5px;
+    }
+
+    .card {
+        max-width: 100%;
+        max-height: none;
+    }
+
+    .game-controls {
+        margin-top: 5px;
+    }
+}
+
+.level-1-card .card-front { background-color: #2196F3; } /* Blå */
+.level-2-card .card-front { background-color: #4CAF50; } /* Grön */
+.level-3-card .card-front { background-color: #F44336; } /* Röd */
+
+/* Ta bort den blå bakgrunden från memory-board */
+.memory-board {
+    display: grid;
+    gap: 10px;
+    margin: 20px auto;
+    max-width: 600px;
+    background-color: transparent;
+}
+
+.card {
+    aspect-ratio: 1 / 1;
+    perspective: 1000px;
+}
+
+/* För 3x3 grid (nivå 1) */
+.memory-board.level-1 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+/* För 4x4 grid (nivå 2) */
+.memory-board.level-2 {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+/* För 5x5 grid (nivå 3) */
+.memory-board.level-3 {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+}
+
+@media (orientation: landscape) {
+    .memory-board.level-1 {
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+    }
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 10px;
+}
+
+.card-back {
+    transform: rotateY(180deg);
+}
+
+.card-back img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+@keyframes pop-and-fade {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+    }
+}
+
+.gold-star {
+    position: absolute;
+    transform-origin: center;
 }

@@ -1,4 +1,6 @@
-console.log("Script is running");
+import { vibrate, showNotification, animateLevelTransition, celebrateWithConfettiAndFireworks, showGoldStar } from './animations.js';
+console.log("Memory script loading");
+
 
 let cards = [];
 let flippedCards = [];
@@ -30,7 +32,7 @@ function initializeGame() {
     const board = document.getElementById('memory-board');
     console.log("Memory board element:", board);
     if (!board) {
-        console.error("Memory board element not found!");
+        console.error("Memory board element not found!"); 
         return;
     }
     board.innerHTML = '';
@@ -38,26 +40,37 @@ function initializeGame() {
     cards = []; // Reset cards array
     flippedCards = []; // Reset flipped cards
 
-    let gridSize, numPairs;
+    let gridSize, numPairs, totalCards;
     switch(currentLevel) {
         case 1:
             gridSize = 3;
             numPairs = 4;
+            totalCards = 9; // 8 kort + 1 Bluey
             break;
         case 2:
             gridSize = 4;
             numPairs = 8;
+            totalCards = 16;
             break;
         case 3:
             gridSize = 5;
             numPairs = 12;
+            totalCards = 25;
             break;
         default:
             gridSize = 3;
             numPairs = 4;
+            totalCards = 9;
     }
     
-    board.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+    const isLandscape = window.innerWidth > window.innerHeight;
+    if (currentLevel === 1 && isLandscape) {
+        board.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        board.style.gridTemplateRows = 'repeat(3, 1fr)';
+    } else {
+        board.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+        board.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
+    }
 
     let selectedImages = shuffleArray([...images]).slice(0, numPairs);
     cards = [...selectedImages, ...selectedImages];
@@ -126,7 +139,7 @@ function flipCard(card) {
         card.classList.add('flipped');
         flippedCards.push({card, index});
         if (flippedCards.length === 2) {
-            setTimeout(checkMatch, 1000);
+            setTimeout(checkMatch, 500); // Minska fördröjningen till 500ms
         }
     }
 }
@@ -142,11 +155,18 @@ function checkMatch() {
         card1.card.classList.add('matched');
         card2.card.classList.add('matched');
         matchedPairs++;
+        showGoldStar(currentLevel); // Visa stjärnan centrerat baserat på aktuell nivå
         updateUI();
         checkLevelCompletion();
     } else {
-        card1.card.classList.remove('flipped');
-        card2.card.classList.remove('flipped');
+        setTimeout(() => {
+            vibrate(200); // Vibrera när ett felaktigt par har valts
+        }, 200); // Kort fördröjning innan vibrationen startar
+
+        setTimeout(() => {
+            card1.card.classList.remove('flipped');
+            card2.card.classList.remove('flipped');
+        }, 700); // Ge lite mer tid innan korten vänds tillbaka
     }
     flippedCards = [];
 }
@@ -161,12 +181,12 @@ function checkLevelCompletion() {
     const requiredPairs = currentLevel === 1 ? 4 : (currentLevel === 2 ? 8 : 12);
     if (matchedPairs >= requiredPairs) {
         if (currentLevel < 3) {
-            animateLevelTransition(() => {
+            animateLevelTransition(currentLevel, () => {
                 currentLevel++;
                 initializeGame();
             });
         } else {
-            animateLevelTransition(() => {
+            animateLevelTransition(currentLevel, () => {
                 showNotification("Grattis! Du har klarat alla nivåer!");
                 // Stanna kvar på nivå 3 istället för att återställa
             });
@@ -187,199 +207,6 @@ function activateDevMode() {
     console.log('Dev mode activated');
     showNotification('Dev mode activated');
 }
-
-function showNotification(message) {
-    const notification = document.createElement('div');
-    notification.textContent = message;
-    notification.style.position = 'fixed';
-    notification.style.top = '10px';
-    notification.style.left = '50%';
-    notification.style.transform = 'translateX(-50%)';
-    notification.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    notification.style.color = 'white';
-    notification.style.padding = '10px';
-    notification.style.borderRadius = '5px';
-    notification.style.zIndex = '1000';
-    document.body.appendChild(notification);
-    setTimeout(() => {
-        document.body.removeChild(notification);
-    }, 3000);
-}
-
-function animateLevelTransition(callback) {
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    overlay.style.display = 'flex';
-    overlay.style.justifyContent = 'center';
-    overlay.style.alignItems = 'center';
-    overlay.style.zIndex = '1000';
-    overlay.style.opacity = '0';
-    overlay.style.transition = 'opacity 0.5s ease-in-out';
-
-    const message = document.createElement('div');
-    message.textContent = `Nivå ${currentLevel} avklarad!`;
-    message.style.color = 'white';
-    message.style.fontSize = '2em';
-    message.style.fontWeight = 'bold';
-
-    overlay.appendChild(message);
-    document.body.appendChild(overlay);
-
-    setTimeout(() => {
-        overlay.style.opacity = '1';
-    }, 50);
-
-    if (currentLevel < 3) {
-        addBalloons();
-    } else {
-        console.log("Calling celebrateWithConfettiAndFireworks for level 3");
-        celebrateWithConfettiAndFireworks();
-    }
-
-    setTimeout(() => {
-        overlay.style.opacity = '0';
-        setTimeout(() => {
-            document.body.removeChild(overlay);
-            callback();
-        }, 500);
-    }, 2000);
-}
-
-function createBalloon() {
-    const balloon = document.createElement('div');
-    balloon.className = 'balloon';
-    balloon.style.left = `${Math.random() * 100}vw`;
-    balloon.style.animationDuration = `${Math.random() * 2 + 3}s`; // Mellan 3-5 sekunder
-    balloon.style.backgroundColor = `hsl(${Math.random() * 360}, 50%, 50%)`; // Slumpmässig färg
-    return balloon;
-}
-
-function addBalloons() {
-    const balloonContainer = document.createElement('div');
-    balloonContainer.className = 'balloon-container';
-    for (let i = 0; i < 20; i++) {
-        balloonContainer.appendChild(createBalloon());
-    }
-    document.body.appendChild(balloonContainer);
-    setTimeout(() => {
-        document.body.removeChild(balloonContainer);
-    }, 5000); // Ta bort ballongerna efter 5 sekunder
-}
-
-function createConfetti() {
-    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-    const confetti = document.createElement('div');
-    confetti.className = 'confetti';
-    confetti.style.left = `${Math.random() * 100}vw`;
-    confetti.style.animationDuration = `${Math.random() * 3 + 2}s`;
-    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-    return confetti;
-}
-
-function createFirework() {
-    const firework = document.createElement('div');
-    firework.className = 'firework';
-    firework.style.left = `${Math.random() * 100}vw`;
-    firework.style.top = `${Math.random() * 100}vh`;
-    firework.style.animationDuration = `${Math.random() * 0.3 + 0.5}s`;
-    return firework;
-}
-
-function celebrateWithConfettiAndFireworks() {
-    console.log("Celebrating with confetti and fireworks");
-    const container = document.createElement('div');
-    container.className = 'celebration-container';
-    
-    // Lägg till konfetti
-    for (let i = 0; i < 100; i++) {
-        const confetti = createConfetti();
-        container.appendChild(confetti);
-        console.log("Added confetti:", confetti);
-    }
-    
-    // Lägg till fyrverkerier
-    for (let i = 0; i < 20; i++) {
-        const firework = createFirework();
-        container.appendChild(firework);
-        console.log("Added firework:", firework);
-    }
-    
-    document.body.appendChild(container);
-    console.log("Celebration container added to body:", container);
-    
-    setTimeout(() => {
-        document.body.removeChild(container);
-        console.log("Celebration container removed");
-    }, 5000);
-}
-
-window.onload = () => {
-    console.log("Window loaded");
-    const startScreen = document.getElementById('start-screen');
-    const startButton = document.getElementById('start-button');
-    const gameScreen = document.getElementById('game-screen');
-
-    console.log("Start screen:", startScreen);
-    console.log("Start button:", startButton);
-    console.log("Game screen:", gameScreen);
-
-    if (!startButton) {
-        console.error("Start button not found!");
-        return;
-    }
-
-    startButton.addEventListener('click', () => {
-        console.log("Start button clicked");
-        try {
-            startScreen.style.display = 'none';
-            gameScreen.style.display = 'flex';
-            initializeGame();
-        } catch (error) {
-            console.error("Error when starting game:", error);
-        }
-    });
-
-    const resetButton = document.getElementById('reset-button');
-    const fullscreenButton = document.getElementById('fullscreen-button');
-
-    resetButton.addEventListener('click', () => {
-        currentLevel = 1;
-        initializeGame();
-    });
-
-    fullscreenButton.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        konami += e.key;
-        if (konamiCode.indexOf(konami) !== 0) {
-            konami = '';
-            return;
-        }
-        if (konami === konamiCode) {
-            activateDevMode();
-            konami = '';
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (devModeActivated && e.key === 'c') {
-            completeLevel();
-        }
-    });
-};
 
 function completeLevel() {
     const allCards = document.querySelectorAll('.card:not(.matched)');
@@ -405,6 +232,84 @@ function completeLevel() {
     setTimeout(() => {
         checkLevelCompletion();
     }, 100);
+}
+
+function resetGame() {
+    currentLevel = 1;
+    matchedPairs = 0;
+    flippedCards = [];
+    cards = [];
+    initializeGame();
+    updateUI();
+}
+
+window.onload = () => {
+    console.log("Window loaded");
+    const startScreen = document.getElementById('start-screen');
+    const startButton = document.getElementById('start-button');
+    const gameScreen = document.getElementById('game-screen');
+    const fullscreenButton = document.getElementById('fullscreen-button');
+    const resetButton = document.getElementById('reset-button'); // Lägg till denna rad
+
+    startButton.addEventListener('click', () => {
+        startScreen.style.display = 'none';
+        gameScreen.style.display = 'block';
+        initializeGame();
+    });
+
+    if (fullscreenButton) {
+        fullscreenButton.addEventListener('click', toggleFullscreen);
+    } else {
+        console.error("Fullscreen button not found!");
+    }
+
+    if (resetButton) {
+        resetButton.addEventListener('click', resetGame);
+    } else {
+        console.error("Reset button not found!");
+    }
+
+    document.addEventListener('keydown', (e) => {
+        konami += e.key;
+        if (konamiCode.indexOf(konami) !== 0) {
+            konami = '';
+            return;
+        }
+        if (konami === konamiCode) {
+            activateDevMode();
+            konami = '';
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (devModeActivated && e.key === 'c') {
+            completeLevel();
+        }
+    });
+};
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+            document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari och Opera
+            document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) { // Internet Explorer/Edge
+            document.documentElement.msRequestFullscreen();
+        }
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { // Firefox
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { // Chrome, Safari och Opera
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { // Internet Explorer/Edge
+            document.msExitFullscreen();
+        }
+    }
 }
 
 console.log("Memory script loaded");

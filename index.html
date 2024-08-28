@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Theos Memory</title>
     <link rel="stylesheet" href="memorystyle.css">
 </head>
@@ -13,13 +13,16 @@
     </div>
     <div id="game-screen" style="display: none;">
         <h1 id="level-title">Nivå 1</h1>
-        <div id="memory-board" class="memory-board"></div>
+        <div id="memory-board" class="memory-board level-1"></div>
         <div class="game-controls">
             <button id="reset-button" class="game-button">Återställ</button>
             <button id="fullscreen-button" class="game-button">Fullskärm</button>
         </div>
     </div>
-    <script src="memoryscript.js"></script>
+
+<script type="module" src="animations.js"></script>
+<script type="module" src="memoryscript.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </body>
 </html>
